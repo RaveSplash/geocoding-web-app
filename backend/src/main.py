@@ -51,3 +51,11 @@ def create_store(state: str, db: Session = Depends(get_db)):
     for db_store in db_stores:
         db.refresh(db_store)
     return db_stores
+
+@app.get("/stores", response_model=list[StoreSchema], tags=["Store"], name="Get Stores")
+def get_store(db:Session = Depends(get_db)):
+    """
+    Get Store - this api will retrieve all stores from the db with it's details
+    """
+    stores = db.query(Store).all()
+    return stores
