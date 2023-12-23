@@ -12,4 +12,4 @@ class Store(Base):
     address = Column(String, unique=True)
     longtitude = Column(Double, nullable=True)
     latitude = Column(Double, nullable=True)
-
+    state= Column(String)

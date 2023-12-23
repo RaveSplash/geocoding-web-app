@@ -5,3 +5,4 @@ class StoreSchema(BaseModel):
     address: str
     longtitude: float
     latitude: float
+    state : str

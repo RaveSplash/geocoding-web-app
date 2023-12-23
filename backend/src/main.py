@@ -42,6 +42,7 @@ def create_store(state: str, db: Session = Depends(get_db)):
             (longtitude, latitude) = get_coordinates(store["address"])
             db_store.longtitude = longtitude
             db_store.latitude = latitude
+            db_store.state = state
             db.add(db_store)
             db_stores.append(db_store)
     db.commit()
