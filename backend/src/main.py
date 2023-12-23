@@ -28,19 +28,18 @@ def create_store(stores: list[StoreSchema], db: Session = Depends(get_db)):
     db_stores = []
     base_url = "https://www.openstreetmap.org/search?query="
     for store in stores:
-        print(store)
         #check if the store address already exist
         existing_store = db.query(Store).filter(Store.address == store.address).first()
-        print(existing_store)
         if existing_store:
             print("this address already exist")
         else:
             db_store = Store(**store.model_dump())
+            # use my function to get coordinates 
+            (longtitude, latitude) = get_coordinates(store.address)
+            db_store.longtitude = longtitude
+            db_store.latitude = latitude
             db.add(db_store)
             db_stores.append(db_store)
-            coordinate = get_coordinates(store.address)
-            print(f"Coordinate for '{store.address}': {coordinate}")
-
     db.commit()
 
    # Refresh each individual store
