@@ -1,48 +1,83 @@
 import React, { useEffect, useState } from 'react';
-import L from 'leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 
-const outlets = [
-    { id: 1, name: 'Outlet 1', lat: 40.7128, lon: -74.0060 },
-    { id: 2, name: 'Outlet 2', lat: 34.0522, lon: -118.2437 },
-    // Add more outlet data as needed
-];
+import L from 'leaflet';
+
+const customIcon = new L.Icon({
+    iconUrl: './zus.png',
+    iconSize: [25, 25],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+});
+
+const malaysiaCenter = [4.2105, 107.9758]; // Latitude and longitude for Malaysia
+const defaultZoom = 6;
 
 export default function App() {
-    const [map, setMap] = useState(null);
+    const [stores, setStores] = useState([]);
+    const [selectedMarker, setSelectedMarker] = useState(null);
 
     useEffect(() => {
-        // Initialize Leaflet map
-        const leafletMap = L.map('map').setView([0, 0], 2);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(leafletMap);
-        setMap(leafletMap);
+        // Fetch store details from my backend FastAPI endpoint
+        fetch('http://127.0.0.1:8000/stores')
+            .then(response => response.json())
+            .then((res) => {
+                console.log(res);
+                setStores(res);
+            })
+            .catch(error => console.error('Error fetching store details:', error));
+    }, []); 
 
-        return () => {
-            // Clean up resources, e.g., remove the map instance
-            leafletMap.remove();
-        };
-    }, []); // Empty dependency array ensures this effect runs only once
+    const calculateCircle = (latitude, longtitude) => {
+        return (
+            <Circle
+                center={[latitude, longtitude]}
+                radius={5000} // 5KM radius
+                color="blue"
+                fillColor="blue"
+                fillOpacity={0.1}
+            />
+        );
+    };
 
-    useEffect(() => {
-        if (map) {
-            outlets.forEach(outlet => {
-                // Draw circle with 5KM radius around each outlet
-                const circle = L.circle([outlet.lat, outlet.lon], {
-                    color: 'blue',
-                    fillColor: 'blue',
-                    fillOpacity: 0.2,
-                    radius: 5000
-                }).addTo(map);
-
-                // TODO: Highlight or mark outlets that intersect
-            });
-        }
-    }, [map]);
+    const handleMarkerClick = (markerId) => {
+        console.log(markerId,"here here")  
+        setSelectedMarker(markerId === selectedMarker ? null : markerId);
+    };
 
     return (
         <div className="App">
-            <div id="map" className="map"></div>
+            <h1>Geocoding Web Application</h1>
+            <MapContainer center={malaysiaCenter} zoom={defaultZoom} style={{ height: '400px', width: '100%' }}>
+                <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {stores.map(store => (
+                    <React.Fragment key={store.id}>
+                        <Marker
+                            position={[store.latitude, store.longtitude]}
+                            icon={customIcon}
+                            eventHandlers={{
+                                click: () => {
+                                    console.log('Marker clicked:', store.id);
+                                    handleMarkerClick(store.id);
+                                },
+                            }}
+                        >
+                            <Popup>
+                                <div>
+                                    <h2>{store.name}</h2>
+                                    <p>{store.address}</p>
+                                </div>
+                            </Popup>
+                        </Marker>
+                        {selectedMarker === store.id && calculateCircle(store.latitude, store.longtitude)}
+                    </React.Fragment>
+                ))}
+            </MapContainer>
         </div>
     );
 }

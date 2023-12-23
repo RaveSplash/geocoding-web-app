@@ -1,5 +1,6 @@
 # functions
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
 import json
 from .utils import get_coordinates, scrap_by_state
 
@@ -11,6 +12,21 @@ from .database import SessionLocal
 from .models import Store
 
 app = FastAPI()
+
+# CORS settings
+origins = [
+    "http://localhost",
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 def get_db():
     db = SessionLocal()
