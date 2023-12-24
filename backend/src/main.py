@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import json
 from .utils import get_coordinates, scrap_by_state
 
+
 # structures
 from sqlalchemy import String
 from sqlalchemy.orm import Session
@@ -74,4 +75,4 @@ def get_store(db:Session = Depends(get_db)):
     Get Store - this api will retrieve all stores from the db with it's details
     """
     stores = db.query(Store).all()
-    return stores
+    return storesj

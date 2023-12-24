@@ -1,11 +1,17 @@
 import json
 from bs4 import BeautifulSoup
 import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+api_key = os.getenv("GEOCODE_API_AUTHCODE")
+print("API Key:", api_key)
 
 def get_coordinates(address):
     base_url = f"https://geocode.xyz/"
     params = {
-        "auth": "60218117238076427679x24940",
+        "auth": os.environ.get("GEOCODE_API_AUTHCODE"),
         "locate": address,
         "region":"MY",
         "json": 1
@@ -15,6 +21,7 @@ def get_coordinates(address):
     
     if response.status_code == 200:
         data = response.json()
+        print(response.content)
         if data:
            if "latt" in data and "longt" in data:
             latitude = float(data["latt"])
