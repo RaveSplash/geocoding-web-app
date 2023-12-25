@@ -16,7 +16,8 @@ Web Scraping Library: BeautifulSoup4
 Database: SQLite  
 
 ## 3. Installation
-python : pip install from requirements.txt
+venv :````python3 -m venv venv```` create a virtual environment  
+python : ````pip install -r requirements.txt```` install all packages from requirements.txt for the backend  
 node: npm install in frontend directory
 
 ## 4. Running 
