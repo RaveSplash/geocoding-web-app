@@ -75,4 +75,4 @@ def get_store(db:Session = Depends(get_db)):
     Get Store - this api will retrieve all stores from the db with it's details
     """
     stores = db.query(Store).all()
-    return storesj
+    return stores
