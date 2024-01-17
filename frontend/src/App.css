@@ -1,7 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@700&display=swap");
 .App {
   text-align: center;
 }
 
 .map {
   height: 500px;
+}
+
+#title {
+  color: blue;
+  font-family: "Merriweather", serif;
 }
